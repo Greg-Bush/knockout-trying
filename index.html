@@ -6,6 +6,7 @@
     <title></title>
     <link rel="stylesheet" href="content/css/bootstrap.min.css">
     <script src="content/js/jquery.min.js"></script>
+    <script src="content/js/jquery.tmpl.min.js"></script>
     <script src="content/js/bootstrap.min.js"></script>
     <script src="content/js/knockout-min.js"></script>
     <script src="main.js"></script>
@@ -14,6 +15,12 @@
 <body>
     <div class="container">
         <br />
+        <script id="alert-template" type="text/x-jquery-tmpl">
+            <div class="alert alert-danger fade in">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <strong>${head}</strong> ${message}
+            </div>
+        </script>
         <form class="form-horizontal">
             <div class="form-group">
                 <label class="control-label col-sm-2">Region</label>
@@ -98,6 +105,11 @@
                     <input type="email" class="form-control" id="email">
                 </div>
             </div>
+
+            <div class="form-group">
+                <div id="errors" class="col-sm-offset-2 col-sm-10"></div>
+            </div>
+
             <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-10">
                     <button type="submit" class="btn btn-warning">Review and Continue</button>
