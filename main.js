@@ -46,10 +46,20 @@ var paymentForm = (function () {
         model.submit = function (formElement) {
             alertsManager.removeAll();
             if (validator.checkRequired(requiredFields, model) & validator.checkNumeric(numericFileds, model) & validator.checkEmails(emailFields, model)) {
-                alert("AJAX request in process");
+                var requestData = ko.toJSON(model);
+                $.post({
+                    url: window.location.href,
+                    data: requestData,
+                    success: function () {
+                        alert('success');
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        alertsManager.showNewDanger(jqXHR.statusText, jqXHR.status);
+                    }
+                });
             }
 
-           
+
         }
 
     }
