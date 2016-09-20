@@ -23,80 +23,37 @@ var paymentForm = (function () {
         });
         model.city = ko.observable("");
 
-       
-        var requiredFields = [];
+        model.cardMonth = ko.observable("");
+        model.cardYear = ko.observable("");
+        model.CSC = ko.observable("");
+        model.firstName = ko.observable("");
+        model.middleNames = ko.observable("");
+        model.lastName = ko.observable("");
+        model.addressLine1 = ko.observable("");
+        model.addressLine2 = ko.observable("");
+        model.phone = ko.observable("");
+        model.email = ko.observable("");
+
+
+
+        var requiredFields = ['region', 'city', 'cardNumber', 'cardMonth', 'cardYear', 'CSC', 'firstName', 'lastName', 'addressLine1', 'phone', 'email'],
+            numericFileds = ['cardNumber', 'cardMonth', 'cardYear', 'CSC', 'phone'],
+            emailFields = ['email'];
+
+        var alertsManager = new bootstrapAlerts.AlertsManager("#alert-template", "#errors"),
+            validator = new formValidation.Validator(alertsManager);
 
         model.submit = function (formElement) {
-        
-
-          
-        }
-
-    }
-
-
-    function AlertModel(head, message) {
-        this.head = head;
-        this.message = message;
-    }
-
-    function AlertsManager(templateId, defaultTargetId) {
-        this._template = $('#' + templateId);
-        this._defaultTargetId = defaultTargetId;
-    }
-    AlertsManager.prototype.showNewDanger = function (error, targetId) {
-        targetId = targetId || this._defaultTargetId;
-        this._template.tmpl(error).insertAfter('#' + targetId);
-    }
-    AlertsManager.prototype.removeAll = function () {
-        $(".alert").alert("close");
-    }
-
-    function Validator(alertsManager) {
-        this.alertsManager = alertsManager;
-    }
-    Validator.prototype._requiredMessage = 'The field i required';
-    Validator.prototype._mustBeNumericMessage = 'The field must be numeric';
-    Validator.prototype._emailNotValidMessage = 'Email is not valid';
-    Validator.prototype._isEmpty = function (val) {
-        return val.lenght === 0;
-    }
-    Validator.prototype._isNumbers = function (val) {
-        return !isNaN(val);
-    }
-    Validator.prototype._isEmail = function (val) {
-        return /^[-\w.]+@([A-z0-9][-A-z0-9]+\.)+[A-z]{2,4}$/.test(val);
-    }
-    Validator.prototype.checkRequired = function (requiredFields, model) {
-        var result = true;
-        for (var field in requiredFields) {
-            if (this._isEmpty(model[field]())) {
-                result = false;
-                this.alertsManager.showNewDanger(new AlertModel('', this._requiredMessage), field);
+            alertsManager.removeAll();
+            if (validator.checkRequired(requiredFields, model) & validator.checkNumeric(numericFileds, model) & validator.checkEmails(emailFields, model)) {
+                alert("AJAX request in process");
             }
+
+           
         }
-        return result;
+
     }
-    Validator.prototype.checkNumeric = function (numericFields, model) {
-        var result = true;
-        for (var field in numericFields) {
-            if (!this._isNumbers(model[field]())) {
-                result = false;
-                this.alertsManager.showNewDanger(new AlertModel('', this._mustBeNumericMessage), field);
-            }
-        }
-        return result;
-    }
-    Validator.prototype.checkEmails = function (emailFields, model) {
-        var result = true;
-        for (var field in emailFields) {
-            if (!this._isEmail(model[field]())) {
-                result = false;
-                this.alertsManager.showNewDanger(new AlertModel('', this._emailNotValidMessage), field);
-            }
-        }
-        return result;
-    }
+
 
 
 
@@ -104,4 +61,78 @@ var paymentForm = (function () {
         ko.applyBindings(new ViewModel());
     });
 
+})();
+
+
+
+
+var bootstrapAlerts = (function () {
+    function AlertModel(head, message) {
+        this.head = head;
+        this.message = message;
+    }
+
+    function AlertsManager(templateId, defaultTargetId) {
+        this._template = $(templateId);
+        this._defaultTargetId = defaultTargetId;
+    }
+    AlertsManager.prototype.showNewDanger = function (message, head, targetId) {
+        targetId = targetId || this._defaultTargetId;
+        head = head || '';
+        this._template.tmpl(new AlertModel(head, message)).insertAfter(targetId);
+    }
+    AlertsManager.prototype.removeAll = function () {
+        $(".alert").alert("close");
+    }
+
+    return {        
+        AlertsManager: AlertsManager
+    }
+})();
+
+
+
+var formValidation = (function () {
+
+    function Validator(alertsManager) {
+        this.alertsManager = alertsManager;
+    }
+    Validator.prototype._isNotEmpty = function (val) {
+        return val.length !== 0;
+    }
+    Validator.prototype._isNumbers = function (val) {
+        return !isNaN(val);
+    }
+    Validator.prototype._isEmail = function (val) {
+        return /^[-\w.]+@([A-z0-9][-A-z0-9]+\.)+[A-z]{2,4}$/.test(val);
+    }
+    Validator.prototype._checkModes = {
+        required: { message: 'The field is required', checkFunc: Validator.prototype._isNotEmpty },
+        numeric: { message: 'The field must be numeric', checkFunc: Validator.prototype._isNumbers },
+        email: { message: 'Email is not valid', checkFunc: Validator.prototype._isEmail }
+    }
+    Validator.prototype._check = function (fields, model, mode) {
+        var result = true,
+            _this = this;
+        fields.forEach(function (item, i, arr) {
+            if (!mode.checkFunc(model[item]())) {
+                result = false;
+                _this.alertsManager.showNewDanger(mode.message, '', '#' + item);
+            }
+        });
+        return result;
+    }
+    Validator.prototype.checkRequired = function (requiredFields, model) {
+        return this._check(requiredFields, model, this._checkModes.required);
+    }
+    Validator.prototype.checkNumeric = function (numericFields, model) {
+        return this._check(numericFields, model, this._checkModes.numeric);
+    }
+    Validator.prototype.checkEmails = function (emailFields, model) {
+        return this._check(emailFields, model, this._checkModes.email);
+    }
+
+    return {
+        Validator: Validator
+    }
 })();
