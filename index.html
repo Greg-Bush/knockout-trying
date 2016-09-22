@@ -9,6 +9,8 @@
     <script src="content/js/jquery.tmpl.min.js"></script>
     <script src="content/js/bootstrap.min.js"></script>
     <script src="content/js/knockout-min.js"></script>
+    <script src="content/js/formValidation.js"></script>
+    <script src="content/js/bootstrapFeatures.js"></script>
     <script src="content/js/main.js"></script>
 </head>
 
@@ -51,9 +53,10 @@
             </div>
             <div class="form-group has-feedback">
                 <label class="control-label col-sm-2">Expiry date</label>
-                <div class="col-sm-10">
-                    <input data-bind="value: cardMonth" type="number" class="form-control" id="cardMonth" placeholder="mm">
-                    /
+                <div class="col-sm-2">
+                    <input data-bind="value: cardMonth" type="number" class="form-control" id="cardMonth" placeholder="mm">                    
+                </div>               
+                <div class="col-sm-2">                   
                     <input data-bind="value: cardYear" type="number" class="form-control" id="cardYear" placeholder="yy">
                 </div>
             </div>
