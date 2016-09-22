@@ -5,18 +5,12 @@
     <meta charset="utf-8" />
     <title></title>
     <link rel="stylesheet" href="content/css/bootstrap.min.css">
-    <script src="content/js/jquery.min.js"></script>
-    <script src="content/js/jquery.tmpl.min.js"></script>
-    <script src="content/js/bootstrap.min.js"></script>
-    <script src="content/js/knockout-min.js"></script>
-    <script src="content/js/formValidation.js"></script>
-    <script src="content/js/bootstrapFeatures.js"></script>
-    <script src="content/js/main.js"></script>
+    <script data-main="js/main" src="js/require.js" async></script>
 </head>
 
 <body>
     <div class="container">
-        <br />        
+        <br />
         <script id="invalid-icon-template" type="text/x-jquery-tmpl">
             <span class="glyphicon glyphicon-remove form-control-feedback"></span>
         </script>
@@ -54,9 +48,9 @@
             <div class="form-group has-feedback">
                 <label class="control-label col-sm-2">Expiry date</label>
                 <div class="col-sm-2">
-                    <input data-bind="value: cardMonth" type="number" class="form-control" id="cardMonth" placeholder="mm">                    
-                </div>               
-                <div class="col-sm-2">                   
+                    <input data-bind="value: cardMonth" type="number" class="form-control" id="cardMonth" placeholder="mm">
+                </div>
+                <div class="col-sm-2">
                     <input data-bind="value: cardYear" type="number" class="form-control" id="cardYear" placeholder="yy">
                 </div>
             </div>
