@@ -3,6 +3,18 @@ var paymentForm = (function () {
     function ViewModel() {
         var model = this;
 
+        var validator = new formValidation.Validator();            
+
+        var requiredFields = ['region', 'city', 'cardNumber', 'cardMonth', 'cardYear', 'CSC', 'firstName', 'lastName', 'addressLine1', 'phone', 'email'],
+            numericFields   = ['cardNumber', 'cardMonth', 'cardYear', 'CSC', 'phone'],
+            emailFields = ['email'],
+            allValidatedFields = requiredFields.concat(numericFields.concat(emailFields));
+
+        var _subjects = {
+            "Tatarstan": ["Kazan", "Naberezhnye Chelny"],
+            "Chuvashia": ["Cheboksary", "Kanash"]
+        }
+
         model.cardNumber = ko.observable("");
         model.isVisa = ko.computed(function () {
             return model.cardNumber()[0] == 4;
@@ -11,18 +23,14 @@ var paymentForm = (function () {
             var num = model.cardNumber()[0];
             return num == 5 || num == 6;
         });
-
-        var _subjects = {
-            "Tatarstan": ["Kazan", "Naberezhnye Chelny"],
-            "Chuvashia": ["Cheboksary", "Kanash"]
-        }
+               
         model.availableRegions = Object.keys(_subjects);
         model.region = ko.observable("");
         model.availableCities = ko.computed(function () {
             return _subjects[model.region()];
         });
-        model.city = ko.observable("");
 
+        model.city = ko.observable("");
         model.cardMonth = ko.observable("");
         model.cardYear = ko.observable("");
         model.CSC = ko.observable("");
@@ -34,49 +42,74 @@ var paymentForm = (function () {
         model.phone = ko.observable("");
         model.email = ko.observable("");
 
+        model.errors = ko.observableArray([]);
 
 
-        var requiredFields = ['region', 'city', 'cardNumber', 'cardMonth', 'cardYear', 'CSC', 'firstName', 'lastName', 'addressLine1', 'phone', 'email'],
-            numericFileds = ['cardNumber', 'cardMonth', 'cardYear', 'CSC', 'phone'],
-            emailFields = ['email'];
-
-        model.invalidFields = ko.observableArray([]);
-
-        var alertsManager = new bootstrapAlerts.AlertsManager("#alert-template", "#errors"),
-            validator = new formValidation.Validator(alertsManager);
+        model.invalidFields = ko.computed(function () {
+            var invalidFields = [];
+            invalidFields = invalidFields.concat(validator.getInvalidFields(requiredFields, model, validator.modes.required));
+            invalidFields = invalidFields.concat(validator.getInvalidFields(numericFields, model, validator.modes.numeric));
+            invalidFields = invalidFields.concat(validator.getInvalidFields(emailFields, model, validator.modes.email));
+            return invalidFields;
+        });
+        model.validFields = ko.computed(function () {
+            var _invalidFields = model.invalidFields();
+            return allValidatedFields.filter(function (item) {
+                return !_invalidFields.includes(item);
+            });
+        });
 
         model.submit = function (formElement) {
-            var _invalidFields = [];
-            _invalidFields = _invalidFields.concat(validator.getInvalidFields(requiredFields, model, validator.modes.required));
-            _invalidFields = _invalidFields.concat(validator.getInvalidFields(numericFileds, model, validator.modes.numeric));
-            _invalidFields = _invalidFields.concat(validator.getInvalidFields(emailFields, model, validator.modes.email));
-            model.invalidFields(_invalidFields);
-            if (_invalidFields.length === 0) {             
-                sendRequest(model.toRequestParameters());
+            //model.errors.removeAll();
+            if (model.invalidFields().length === 0) {
+                model.sendRequest(model.toRequestParameters());
             }
         }
+        
     }
     ViewModel.prototype.toRequestParameters = function () {
         return ko.toJSON(this);
     }
-
-
-    function sendRequest(data) {
+    ViewModel.prototype.sendRequest = function (data) {
+        var _this = this;
         $.post({
             url: window.location.href,
-            data: requestData,
+            data: data,
             success: function () {
                 alert('success');
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                alertsManager.showNewDanger(jqXHR.statusText, jqXHR.status);
+                _this.errors.push(jqXHR);
             }
         });
     }
+    ViewModel.prototype.initValidationRedraw = function () {       
+        var inputStatesManager = new bootstrapFeatures.inputStatesManager('#valid-icon-template', '#invalid-icon-template');
 
+        this.validFields.subscribe(function (newValue) {
+            newValue.forEach(function (fields) {
+                inputStatesManager.mark('#' + fields, inputStatesManager.modes.valid);
+            });
+        });
+        this.invalidFields.subscribe(function (newValue) {
+            newValue.forEach(function (fields) {
+                inputStatesManager.mark('#' + fields, inputStatesManager.modes.invalid);
+            });
+        });     
+    }
+
+    
 
     $(function () {
-        ko.applyBindings(new ViewModel());
+        var model= new ViewModel();
+        
+
+        $('#paymentForm').one('submit', function () {
+            model.initValidationRedraw();
+        });      
+        
+        ko.applyBindings(model);
+
     });
 
 })();
@@ -84,7 +117,7 @@ var paymentForm = (function () {
 
 
 
-var bootstrapAlerts = (function () {
+var bootstrapFeatures = (function () {
     function AlertModel(head, message) {
         this.head = head;
         this.message = message;
@@ -103,8 +136,29 @@ var bootstrapAlerts = (function () {
         $(".alert").alert("close");
     }
 
+
+    function inputStatesManager(validTemplateId, invalidTemplateId) {
+        this.validView = $(validTemplateId).tmpl(),
+        this.invalidView = $(invalidTemplateId).tmpl();
+    }
+    inputStatesManager.prototype.modes = {
+        valid: { view: this.validView, parentClass: 'has-success' },
+        invalid: { view: this.invalidView, parentClass: 'has-error' }
+    }
+    inputStatesManager.prototype._parentClassesToRemove =
+        $.map(inputStatesManager.prototype.modes, function (item) {
+            return item.parentClass;
+        }).join(' ');
+    inputStatesManager.prototype.mark = function (inputId, mode) {
+        var input = $(inputId);
+        input.insertAfter(mode.view);
+        input.parent().removeClass(this._parentClassesToRemove).addClass(mode.parentClass);
+    }
+
+
     return {
-        AlertsManager: AlertsManager
+        AlertsManager: AlertsManager,
+        inputStatesManager: inputStatesManager
     }
 })();
 
@@ -144,8 +198,3 @@ var formValidation = (function () {
         Validator: Validator
     }
 })();
-
-// input стили
-//шаблон publisher subscriber
-// amd requirejs
-// messages обобщение
