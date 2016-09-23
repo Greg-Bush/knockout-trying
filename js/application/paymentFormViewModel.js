@@ -1,15 +1,22 @@
-﻿define(  
+﻿define(
     ['jquery', 'knockout', './bootstrapFeatures', './formValidation'],
     function (jquery, ko, bootstrapFeatures, formValidation) {
+
         function ViewModel() {
             var model = this;
 
             var validator = new formValidation.Validator();
 
-            var requiredFields = ['region', 'city', 'cardNumber', 'cardMonth', 'cardYear', 'CSC', 'firstName', 'lastName', 'addressLine1', 'phone', 'email'],
-                numericFields = ['cardNumber', 'cardMonth', 'cardYear', 'CSC', 'phone'],
-                emailFields = ['email'],
-                allValidatedFields = requiredFields.concat(numericFields.concat(emailFields));
+            var toValidate = [
+                new formValidation.ValidateModel(validator.isNotEmpty, ['region', 'city', 'firstName', 'lastName', 'addressLine1', 'email']),
+                new formValidation.ValidateModel(validator.isNumbers, ['cardNumber', 'cardMonth', 'cardYear', 'CSC', 'phone']),
+                new formValidation.ValidateModel(validator.isNotEmpty, ['email'])
+            ];
+            //var allValidatedFields = [];          
+            //toValidate.forEach(function (item) {
+            //    allValidatedFields = allValidatedFields.concat(item.fields);
+            //});
+            var allValidatedFields = ['region', 'city', 'cardNumber', 'cardMonth', 'cardYear', 'CSC', 'firstName', 'lastName', 'addressLine1', 'phone', 'email'];
 
             var _subjects = {
                 "Tatarstan": ["Kazan", "Naberezhnye Chelny"],
@@ -45,24 +52,31 @@
 
             model.errors = ko.observableArray([]);
 
-
-            model.invalidFields = ko.computed(function () {
-                var invalidFields = [];
-                invalidFields = invalidFields.concat(validator.getInvalidFields(requiredFields, model, validator.modes.required));
-                invalidFields = invalidFields.concat(validator.getInvalidFields(numericFields, model, validator.modes.numeric));
-                invalidFields = invalidFields.concat(validator.getInvalidFields(emailFields, model, validator.modes.email));
-                return invalidFields;
+            model.inputStates = {
+                invalid: new bootstrapFeatures.inputStateModel('#invalid-icon-template', 'has-error'),
+                valid: new bootstrapFeatures.inputStateModel('#valid-icon-template', 'has-success')
+            }
+            model.fieldStates = {};
+            model.fieldStates.invalid = ko.computed(function () {
+                var result = validator.getInvalidFields(toValidate, model);
+                return result;
             });
-            model.validFields = ko.computed(function () {
-                var _invalidFields = model.invalidFields();
-                return allValidatedFields.filter(function (item) {
+            model.fieldStates.valid = ko.computed(function () {             
+                var _invalidFields = model.fieldStates.invalid();
+                var result = allValidatedFields.filter(function (item) {
                     return !_invalidFields.includes(item);
                 });
+                return result;
+            });
+
+
+            model.isFormValid = ko.computed(function () {               
+                return model.fieldStates.invalid().length === 0;
             });
 
             model.submit = function (formElement) {
                 //model.errors.removeAll();
-                if (model.invalidFields().length === 0) {
+                if (model.isFormValid()) {
                     model.sendRequest(model.toRequestParameters());
                 }
             }
@@ -85,19 +99,21 @@
             });
         }
         ViewModel.prototype.initValidationRedraw = function () {
-            var inputStatesManager = new bootstrapFeatures.inputStatesManager('#valid-icon-template', '#invalid-icon-template');
+            var _this = this;
+            var inputStatesManager = new bootstrapFeatures.inputStatesManager(this.inputStates);
 
-            this.validFields.subscribe(function (newValue) {
-                newValue.forEach(function (fields) {
-                    inputStatesManager.mark('#' + fields, inputStatesManager.modes.valid);
+            for (var state in this.fieldStates) {                
+                _this.fieldStates[state].subscribe(function (newValue) {                    
+                    newValue.forEach(function (field) {
+                        inputStatesManager.mark('#' + field, _this.inputStates[state]);
+                    });
                 });
-            });
-            this.invalidFields.subscribe(function (newValue) {
-                newValue.forEach(function (fields) {
-                    inputStatesManager.mark('#' + fields, inputStatesManager.modes.invalid);
-                });
-            });
+            }
         }
+
+
+
+
 
         return ViewModel;
 

@@ -1,4 +1,4 @@
-define(    
+define(
     ['jquery', 'jquery.tmpl', 'bootstrap'],
     function () {
         function AlertModel(head, message) {
@@ -19,29 +19,27 @@ define(
             $(".alert").alert("close");
         }
 
+        function inputStateModel(viewTemplateId, parentClass) {
+            this.view = $(viewTemplateId).tmpl();
+            this.parentClass = parentClass;
+        }
 
-        function inputStatesManager(validTemplateId, invalidTemplateId) {
-            this.validView = $(validTemplateId).tmpl(),
-            this.invalidView = $(invalidTemplateId).tmpl();
-        }
-        inputStatesManager.prototype.modes = {
-            valid: { view: this.validView, parentClass: 'has-success' },
-            invalid: { view: this.invalidView, parentClass: 'has-error' }
-        }
-        inputStatesManager.prototype._parentClassesToRemove =
-            $.map(inputStatesManager.prototype.modes, function (item) {
+        function inputStatesManager(inputStates) {
+            this._parentClassesToRemove = $.map(inputStates, function (item) {
                 return item.parentClass;
             }).join(' ');
-        inputStatesManager.prototype.mark = function (inputId, mode) {
+        }
+        inputStatesManager.prototype.mark = function (inputId, inputState) {
             var input = $(inputId);
-            input.insertAfter(mode.view);
-            input.parent().removeClass(this._parentClassesToRemove).addClass(mode.parentClass);
+            input.after(inputState.view.clone());
+            input.parent().removeClass(this._parentClassesToRemove).addClass(inputState.parentClass);
         }
 
 
         return {
             AlertsManager: AlertsManager,
-            inputStatesManager: inputStatesManager
+            inputStatesManager: inputStatesManager,
+            inputStateModel: inputStateModel
         }
     }
 );

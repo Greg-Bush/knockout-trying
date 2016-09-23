@@ -1,35 +1,39 @@
-define(    
+define(
     function () {
+
+        function ValidateModel(checkFunc, fields) {
+            this.check = checkFunc;
+            this.fields = fields;
+        }
+
 
         function Validator() { }
 
-        Validator.prototype._isNotEmpty = function (val) {
+        Validator.prototype.isNotEmpty = function (val) {
             return val.length !== 0;
         }
-        Validator.prototype._isNumbers = function (val) {
-            return !isNaN(val);
+        Validator.prototype.isNumbers = function (val) {
+            return Validator.prototype.isNotEmpty(val) && !isNaN(val);
         }
-        Validator.prototype._isEmail = function (val) {
-            return /^[-\w.]+@([A-z0-9][-A-z0-9]+\.)+[A-z]{2,4}$/.test(val);
-        }
-        Validator.prototype.modes = {
-            required: { check: Validator.prototype._isNotEmpty },
-            numeric: { check: Validator.prototype._isNumbers },
-            email: { check: Validator.prototype._isEmail }
+        Validator.prototype.isEmail = function (val) {
+            return Validator.prototype.isNotEmpty(val) && /^[-\w.]+@([A-z0-9][-A-z0-9]+\.)+[A-z]{2,4}$/.test(val);
         }
 
-        Validator.prototype.getInvalidFields = function (fieldsToValidate, model, validationMode) {
+        Validator.prototype.getInvalidFields = function (validateModelArray, modelWithObservableFields) {
             var result = [];
-            fieldsToValidate.forEach(function (item, i, arr) {
-                if (!validationMode.check(model[item]())) {
-                    result.push(item);
-                }
+            validateModelArray.forEach(function (model) {
+                model.fields.forEach(function (field) {
+                    if (!model.check(modelWithObservableFields[field]())) {
+                        result.push(field);
+                    }
+                });
             });
             return result;
         }
 
         return {
-            Validator: Validator
+            Validator: Validator,
+            ValidateModel: ValidateModel
         }
     }
 );
