@@ -1,5 +1,4 @@
-define(
-    'formValidation',
+define(    
     function () {
 
         function Validator() { }

@@ -1,6 +1,5 @@
-define(
-    'bootstrapFeatures',
-    ['jquery.min', 'jquery.tmpl.min', 'bootstrap.min'],
+define(    
+    ['jquery', 'jquery.tmpl', 'bootstrap'],
     function () {
         function AlertModel(head, message) {
             this.head = head;
