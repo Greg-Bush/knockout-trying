@@ -31,6 +31,7 @@ define(
         }
         inputStatesManager.prototype.mark = function (inputId, inputState) {
             var input = $(inputId);
+            input.siblings().remove();
             input.after(inputState.view.clone());
             input.parent().removeClass(this._parentClassesToRemove).addClass(inputState.parentClass);
         }

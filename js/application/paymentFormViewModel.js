@@ -8,15 +8,15 @@
             var validator = new formValidation.Validator();
 
             var toValidate = [
-                new formValidation.ValidateModel(validator.isNotEmpty, ['region', 'city', 'firstName', 'lastName', 'addressLine1', 'email']),
+                new formValidation.ValidateModel(validator.isNotEmpty, ['firstName', 'lastName', 'addressLine1']),
                 new formValidation.ValidateModel(validator.isNumbers, ['cardNumber', 'cardMonth', 'cardYear', 'CSC', 'phone']),
-                new formValidation.ValidateModel(validator.isNotEmpty, ['email'])
+                new formValidation.ValidateModel(validator.isEmail, ['email'])
             ];
             //var allValidatedFields = [];          
             //toValidate.forEach(function (item) {
             //    allValidatedFields = allValidatedFields.concat(item.fields);
             //});
-            var allValidatedFields = ['region', 'city', 'cardNumber', 'cardMonth', 'cardYear', 'CSC', 'firstName', 'lastName', 'addressLine1', 'phone', 'email'];
+            var allValidatedFields = ['cardNumber', 'cardMonth', 'cardYear', 'CSC', 'firstName', 'lastName', 'addressLine1', 'phone', 'email'];
 
             var _subjects = {
                 "Tatarstan": ["Kazan", "Naberezhnye Chelny"],
@@ -102,12 +102,16 @@
             var _this = this;
             var inputStatesManager = new bootstrapFeatures.inputStatesManager(this.inputStates);
 
-            for (var state in this.fieldStates) {                
-                _this.fieldStates[state].subscribe(function (newValue) {                    
+            for (var state in this.fieldStates) {
+                _this.fieldStates[state].subscribe(buidFunction(state));
+            }
+
+            function buidFunction(validationState) {
+                return function (newValue) {
                     newValue.forEach(function (field) {
-                        inputStatesManager.mark('#' + field, _this.inputStates[state]);
+                        inputStatesManager.mark('#' + field, _this.inputStates[validationState]);
                     });
-                });
+                }
             }
         }
 
