@@ -91,7 +91,7 @@
             model._allValidatedFields.forEach(function (field) {
                 var currentInputModel = model[field];
                 currentInputModel.isValid.subscribe(buildFunction(currentInputModel));
-                currentInputModel.isValid.notifySubscribers();
+                currentInputModel.isValid.notifySubscribers(currentInputModel.isValid());
             });
 
 
