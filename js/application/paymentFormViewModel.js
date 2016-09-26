@@ -1,18 +1,14 @@
 ﻿define(
-    ['jquery', 'knockout', './formValidation'],
-    function (jquery, ko, formValidation) {
+    ['jquery', 'knockout', './formValidation', './ValidatedInputModel'],
+    function (jquery, ko, formValidation, ValidatedInputModel) {
 
-        function ValidatedInputModel(isValidFunc, viewState) {
-            var model = this;
-            model.value = ko.observable('');
-            model.isValid = ko.computed(function () {
-                return isValidFunc(model.value());
-            });
-            model.viewState = ko.observable(viewState);
-        }
+        var defaultState = new StateModel('default-icon-template', ''),
+            invalidState = new StateModel('invalid-icon-template', 'has-error'),
+            validState = new StateModel('valid-icon-template', 'has-success');
+
 
         function StateModel(template, parentClass) {
-            this.template = template || 'default-icon-template';
+            this.template = template;
             this.parentClass = parentClass;
         }
 
@@ -29,10 +25,9 @@
             model._allValidatedFields = ['cardNumber', 'cardMonth', 'cardYear', 'CSC', 'firstName', 'lastName', 'addressLine1', 'phone', 'email'];
             var optionalFields = ['region', 'city', 'middleNames', 'addressLine2'];
 
-            var inputState = new StateModel('', '');
             toValidate.forEach(function (item) {
                 item.fields.forEach(function (field) {
-                    model[field] = new ValidatedInputModel(item.check, inputState);
+                    model[field] = new ValidatedInputModel(item.check, defaultState);
                 });
             });
             optionalFields.forEach(function (field) {
@@ -93,8 +88,6 @@
         }
         ViewModel.prototype.initValidationRedraw = function () {
             var model = this;
-            var invalidState = new StateModel('invalid-icon-template', 'has-error'),
-                validState = new StateModel('valid-icon-template', 'has-success');
             model._allValidatedFields.forEach(function (field) {
                 var currentInputModel = model[field];
                 currentInputModel.isValid.subscribe(buildFunction(currentInputModel));
