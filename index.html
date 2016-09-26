@@ -19,42 +19,7 @@
         </script>
         <script id="default-icon-template" type="text/html">           
         </script>
-        <template id="credit-card-inputs">
-            <div class="form-group has-feedback" data-bind="css: cardNumber.viewState().parentClass">
-                <label class="control-label col-sm-2">Credit card number</label>
-                <div class="col-sm-10">
-                    <input data-bind="value: cardNumber.value" type="number" class="form-control" id="cardNumber">
-                    <div data-bind="template: cardNumber.viewState().template"></div>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="control-label col-sm-2">Payment types</label>
-                <div class="col-sm-10">
-                    <i class="glyphicon glyphicon-ok" data-bind="visible: isVisa" style="display:none;"></i>
-                    <img width="50" src="content/img/visa.png" />
-                    <i class="glyphicon glyphicon-ok" data-bind="visible: isMasterCard" style="display:none;margin-left:10px;"></i>
-                    <img width="50" src="content/img/mastercard.png" />
-                </div>
-            </div>
-            <div class="form-group has-feedback">
-                <label class="control-label col-sm-2">Expiry date</label>
-                <div class="col-sm-2" data-bind="css: cardMonth.viewState().parentClass">
-                    <input data-bind="value: cardMonth.value" type="number" class="form-control" id="cardMonth" placeholder="mm">
-                    <div data-bind="template: cardMonth.viewState().template"></div>
-                </div>
-                <div class="col-sm-2" data-bind="css: cardYear.viewState().parentClass">
-                    <input data-bind="value: cardYear.value" type="number" class="form-control" id="cardYear" placeholder="yy">
-                    <div data-bind="template: cardYear.viewState().template"></div>
-                </div>
-            </div>
-            <div class="form-group has-feedback" data-bind="css: CSC.viewState().parentClass">
-                <label class="control-label col-sm-2">CSC</label>
-                <div class="col-sm-10">
-                    <input data-bind="value: CSC.value" type="text" class="form-control" id="CSC">
-                    <div data-bind="template: CSC.viewState().template"></div>
-                </div>
-            </div>
-        </template>
+                
         <form id="paymentForm" data-bind="submit:submit" class="form-horizontal">
             <div class="form-group">
                 <label class="control-label col-sm-2">Region</label>

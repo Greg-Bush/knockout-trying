@@ -1,16 +1,10 @@
 ﻿define(
-    ['jquery', 'knockout', './formValidation', './ValidatedInputModel'],
-    function (jquery, ko, formValidation, ValidatedInputModel) {
+    ['jquery', 'knockout', './formValidation', './ValidatedInputModel','./StateViewModel'],
+    function (jquery, ko, formValidation, ValidatedInputModel, StateModel) {
 
         var defaultState = new StateModel('default-icon-template', ''),
             invalidState = new StateModel('invalid-icon-template', 'has-error'),
             validState = new StateModel('valid-icon-template', 'has-success');
-
-
-        function StateModel(template, parentClass) {
-            this.template = template;
-            this.parentClass = parentClass;
-        }
 
         function ViewModel() {
             var model = this;

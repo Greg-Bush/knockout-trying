@@ -13,6 +13,6 @@ require.config({
 //    throw err;
 //};
 
-require(["application/app"], function (app) {
+require(["application/app2"], function (app) {
     app.start();
 });

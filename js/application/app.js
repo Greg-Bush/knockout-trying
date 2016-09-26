@@ -7,12 +7,12 @@
                 var model = new ViewModel();
                 ko.components.register('credit-card-inputs', {
                     viewModel: { instance: model },
-                    template: { element: 'credit-card-inputs' }
+                    template: { require: 'text!application/components/credit-card-inputs/template.html' }
                 });
 
 
                 $(function () {
-                    
+
 
                     $('#paymentForm').one('submit', function (e) {
                         e.preventDefault();
