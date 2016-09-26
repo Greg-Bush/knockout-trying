@@ -4,12 +4,15 @@
         return {
             start: function () {
 
-
+                var model = new ViewModel();
+                ko.components.register('credit-card-inputs', {
+                    viewModel: { instance: model },
+                    template: { element: 'credit-card-inputs' }
+                });
 
 
                 $(function () {
-                    var model = new ViewModel();
-
+                    
 
                     $('#paymentForm').one('submit', function (e) {
                         e.preventDefault();
