@@ -11,29 +11,32 @@
 <body>
     <div class="container">
         <br />
-        <script id="invalid-icon-template" type="text/x-jquery-tmpl">
+        <script id="invalid-icon-template" type="text/html">
             <span class="glyphicon glyphicon-remove form-control-feedback"></span>
         </script>
-        <script id="valid-icon-template" type="text/x-jquery-tmpl">
+        <script id="valid-icon-template" type="text/html">
             <span class="glyphicon glyphicon-ok form-control-feedback"></span>
         </script>
+        <script id="default-icon-template" type="text/html">           
+        </script>
         <form id="paymentForm" data-bind="submit:submit" class="form-horizontal">
-            <div class="form-group  has-feedback">
+            <div class="form-group">
                 <label class="control-label col-sm-2">Region</label>
                 <div class="col-sm-10">
                     <select data-bind="options: availableRegions, value: region" class="form-control" id="region"></select>
                 </div>
             </div>
-            <div class="form-group has-feedback">
+            <div class="form-group">
                 <label class="control-label col-sm-2">City</label>
                 <div class="col-sm-10">
                     <select data-bind="options: availableCities, value: city" class="form-control" id="city"></select>
                 </div>
             </div>
-            <div class="form-group has-feedback">
+            <div class="form-group has-feedback" data-bind="css: cardNumber.viewState().parentClass">
                 <label class="control-label col-sm-2">Credit card number</label>
                 <div class="col-sm-10">
-                    <input data-bind="value: cardNumber" type="number" class="form-control" id="cardNumber">
+                    <input data-bind="value: cardNumber.value" type="number" class="form-control" id="cardNumber">
+                    <div data-bind="template: cardNumber.viewState().template"></div>
                 </div>
             </div>
             <div class="form-group">
@@ -47,23 +50,27 @@
             </div>
             <div class="form-group has-feedback">
                 <label class="control-label col-sm-2">Expiry date</label>
-                <div class="col-sm-2">
-                    <input data-bind="value: cardMonth" type="number" class="form-control" id="cardMonth" placeholder="mm">
+                <div class="col-sm-2" data-bind="css: cardMonth.viewState().parentClass">
+                    <input data-bind="value: cardMonth.value" type="number" class="form-control" id="cardMonth" placeholder="mm">
+                    <div data-bind="template: cardMonth.viewState().template"></div>
                 </div>
-                <div class="col-sm-2">
-                    <input data-bind="value: cardYear" type="number" class="form-control" id="cardYear" placeholder="yy">
+                <div class="col-sm-2" data-bind="css: cardNumber.viewState().parentClass">
+                    <input data-bind="value: cardYear.value" type="number" class="form-control" id="cardYear" placeholder="yy">
+                    <div data-bind="template: cardNumber.viewState().template"></div>
                 </div>
             </div>
-            <div class="form-group has-feedback">
+            <div class="form-group has-feedback" data-bind="css: CSC.viewState().parentClass">
                 <label class="control-label col-sm-2">CSC</label>
                 <div class="col-sm-10">
-                    <input data-bind="value: CSC" type="text" class="form-control" id="CSC">
+                    <input data-bind="value: CSC.value" type="text" class="form-control" id="CSC">
+                    <div data-bind="template: CSC.viewState().template"></div>
                 </div>
             </div>
-            <div class="form-group has-feedback">
+            <div class="form-group has-feedback" data-bind="css: firstName.viewState().parentClass">
                 <label class="control-label col-sm-2">First name</label>
                 <div class="col-sm-10">
-                    <input data-bind="value: firstName" type="text" class="form-control" id="firstName">
+                    <input data-bind="value: firstName.value" type="text" class="form-control" id="firstName">
+                    <div data-bind="template: firstName.viewState().template"></div>
                 </div>
             </div>
             <div class="form-group">
@@ -72,16 +79,18 @@
                     <input data-bind="value: middleNames" type="text" class="form-control" id="middleNames">
                 </div>
             </div>
-            <div class="form-group has-feedback">
+            <div class="form-group has-feedback" data-bind="css: lastName.viewState().parentClass">
                 <label class="control-label col-sm-2">Last name</label>
                 <div class="col-sm-10">
-                    <input data-bind="value: lastName" type="text" class="form-control" id="lastName">
+                    <input data-bind="value: lastName.value" type="text" class="form-control" id="lastName">
+                    <div data-bind="template: lastName.viewState().template"></div>
                 </div>
             </div>
-            <div class="form-group has-feedback">
+            <div class="form-group has-feedback" data-bind="css: addressLine1.viewState().parentClass">
                 <label class="control-label col-sm-2">Address Line 1</label>
                 <div class="col-sm-10">
-                    <input data-bind="value: addressLine1" type="text" class="form-control" id="addressLine1">
+                    <input data-bind="value: addressLine1.value" type="text" class="form-control" id="addressLine1">
+                    <div data-bind="template: addressLine1.viewState().template"></div>
                 </div>
             </div>
             <div class="form-group">
@@ -90,16 +99,18 @@
                     <input data-bind="value: addressLine2" type="text" class="form-control" id="addressLine2">
                 </div>
             </div>
-            <div class="form-group  has-feedback">
+            <div class="form-group  has-feedback" data-bind="css: phone.viewState().parentClass">
                 <label class="control-label col-sm-2">Telephone</label>
                 <div class="col-sm-10">
-                    <input data-bind="value: phone" type="tel" class="form-control" id="phone">
+                    <input data-bind="value: phone.value" type="tel" class="form-control" id="phone">
+                    <div data-bind="template: phone.viewState().template"></div>
                 </div>
             </div>
-            <div class="form-group  has-feedback">
+            <div class="form-group  has-feedback" data-bind="css: email.viewState().parentClass">
                 <label class="control-label col-sm-2">Email</label>
                 <div class="col-sm-10">
-                    <input data-bind="value: email" type="text" class="form-control" id="email">
+                    <input data-bind="value: email.value" type="text" class="form-control" id="email">
+                    <div data-bind="template: email.viewState().template"></div>
                 </div>
             </div>
 

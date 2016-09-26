@@ -1,6 +1,20 @@
 ﻿define(
-    ['jquery', 'knockout', './bootstrapFeatures', './formValidation'],
-    function (jquery, ko, bootstrapFeatures, formValidation) {
+    ['jquery', 'knockout', './formValidation'],
+    function (jquery, ko, formValidation) {
+
+        function ValidatedInputModel(isValidFunc, viewState) {
+            var model = this;
+            model.value = ko.observable('');
+            model.isValid = ko.computed(function () {
+                return isValidFunc(model.value());
+            });
+            model.viewState = ko.observable(viewState);
+        }
+
+        function StateModel(template, parentClass) {
+            this.template = template || 'default-icon-template';
+            this.parentClass = parentClass;
+        }
 
         function ViewModel() {
             var model = this;
@@ -12,66 +26,45 @@
                 new formValidation.ValidateModel(validator.isNumbers, ['cardNumber', 'cardMonth', 'cardYear', 'CSC', 'phone']),
                 new formValidation.ValidateModel(validator.isEmail, ['email'])
             ];
-            //var allValidatedFields = [];          
-            //toValidate.forEach(function (item) {
-            //    allValidatedFields = allValidatedFields.concat(item.fields);
-            //});
-            var allValidatedFields = ['cardNumber', 'cardMonth', 'cardYear', 'CSC', 'firstName', 'lastName', 'addressLine1', 'phone', 'email'];
+            model._allValidatedFields = ['cardNumber', 'cardMonth', 'cardYear', 'CSC', 'firstName', 'lastName', 'addressLine1', 'phone', 'email'];
+            var optionalFields = ['region', 'city', 'middleNames', 'addressLine2'];
+
+            var inputState = new StateModel('', '');
+            toValidate.forEach(function (item) {
+                item.fields.forEach(function (field) {
+                    model[field] = new ValidatedInputModel(item.check, inputState);
+                });
+            });
+            optionalFields.forEach(function (field) {
+                model[field] = ko.observable('');
+            });
+
+            model.isVisa = ko.computed(function () {
+                return model.cardNumber.value()[0] == 4;
+            });
+            model.isMasterCard = ko.computed(function () {
+                var num = model.cardNumber.value()[0];
+                return num == 5 || num == 6;
+            });
 
             var _subjects = {
                 "Tatarstan": ["Kazan", "Naberezhnye Chelny"],
                 "Chuvashia": ["Cheboksary", "Kanash"]
             }
 
-            model.cardNumber = ko.observable("");
-            model.isVisa = ko.computed(function () {
-                return model.cardNumber()[0] == 4;
-            });
-            model.isMasterCard = ko.computed(function () {
-                var num = model.cardNumber()[0];
-                return num == 5 || num == 6;
-            });
-
             model.availableRegions = Object.keys(_subjects);
-            model.region = ko.observable("");
             model.availableCities = ko.computed(function () {
                 return _subjects[model.region()];
             });
 
-            model.city = ko.observable("");
-            model.cardMonth = ko.observable("");
-            model.cardYear = ko.observable("");
-            model.CSC = ko.observable("");
-            model.firstName = ko.observable("");
-            model.middleNames = ko.observable("");
-            model.lastName = ko.observable("");
-            model.addressLine1 = ko.observable("");
-            model.addressLine2 = ko.observable("");
-            model.phone = ko.observable("");
-            model.email = ko.observable("");
-
             model.errors = ko.observableArray([]);
 
-            model.inputStates = {
-                invalid: new bootstrapFeatures.inputStateModel('#invalid-icon-template', 'has-error'),
-                valid: new bootstrapFeatures.inputStateModel('#valid-icon-template', 'has-success')
-            }
-            model.fieldStates = {};
-            model.fieldStates.invalid = ko.computed(function () {
-                var result = validator.getInvalidFields(toValidate, model);
-                return result;
-            });
-            model.fieldStates.valid = ko.computed(function () {             
-                var _invalidFields = model.fieldStates.invalid();
-                var result = allValidatedFields.filter(function (item) {
-                    return !_invalidFields.includes(item);
-                });
-                return result;
-            });
-
-
-            model.isFormValid = ko.computed(function () {               
-                return model.fieldStates.invalid().length === 0;
+            model.isFormValid = ko.computed(function () {
+                for (i = 0; i < model._allValidatedFields.length; i++) {
+                    if (!model[model._allValidatedFields[i]].isValid())
+                        return false;
+                }
+                return true;
             });
 
             model.submit = function (formElement) {
@@ -99,18 +92,22 @@
             });
         }
         ViewModel.prototype.initValidationRedraw = function () {
-            var _this = this;
-            var inputStatesManager = new bootstrapFeatures.inputStatesManager(this.inputStates);
+            var model = this;
+            var invalidState = new StateModel('invalid-icon-template', 'has-error'),
+                validState = new StateModel('valid-icon-template', 'has-success');
+            model._allValidatedFields.forEach(function (field) {
+                var currentInputModel = model[field];
+                currentInputModel.isValid.subscribe(buildFunction(currentInputModel));
+                currentInputModel.isValid.notifySubscribers();
+            });
 
-            for (var state in this.fieldStates) {
-                _this.fieldStates[state].subscribe(buidFunction(state));
-            }
 
-            function buidFunction(validationState) {
+            function buildFunction(inputModel) {
                 return function (newValue) {
-                    newValue.forEach(function (field) {
-                        inputStatesManager.mark('#' + field, _this.inputStates[validationState]);
-                    });
+                    if (newValue)
+                        inputModel.viewState(validState);
+                    else
+                        inputModel.viewState(invalidState);
                 }
             }
         }
