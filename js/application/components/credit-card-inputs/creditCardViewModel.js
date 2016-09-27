@@ -1,15 +1,17 @@
 ﻿define(
-    ['knockout', '../../formValidation', '../../ValidatedInputModel', '../../StateViewModel'],
-    function (ko, formValidation, ValidatedInputModel, StateModel) {
-        var defaultState = new StateModel('default-icon-template', '');
+    ['knockout', '../../formValidation', '../../abstractFormViewModel'],
+    function (ko, formValidation, abstractFormViewModel) {
 
-        function ViewModel() {
+        function ViewModel() { // :abstractFormViewModel
             var model = this;
             var validator = new formValidation.Validator();
-            model.cardNumber = new ValidatedInputModel(validator.isNumbers, defaultState);
-            model.cardMonth = new ValidatedInputModel(validator.isNumbers, defaultState);
-            model.cardYear = new ValidatedInputModel(validator.isNumbers, defaultState);
-            model.CSC = new ValidatedInputModel(validator.isNumbers, defaultState);
+
+            var toValidate = [
+                new formValidation.ValidateModel(validator.isNumbers, ['cardNumber', 'cardMonth', 'cardYear', 'CSC'])
+            ];
+
+            abstractFormViewModel.call(this, toValidate); // вызов конструктора родителя
+
             model.isVisa = ko.computed(function () {
                 return model.cardNumber.value()[0] == 4;
             });
@@ -18,6 +20,8 @@
                 return num == 5 || num == 6;
             });
         }
+        ViewModel.prototype = Object.create(abstractFormViewModel.prototype); // наследуем
+        ViewModel.prototype.constructor = abstractFormViewModel;
 
         return ViewModel;
     }
