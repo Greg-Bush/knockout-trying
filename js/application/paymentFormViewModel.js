@@ -42,7 +42,7 @@
         }
 
         ViewModel.prototype = Object.create(abstractFormViewModel.prototype); // наследуем
-        ViewModel.prototype.constructor = abstractFormViewModel;
+        ViewModel.prototype.constructor = ViewModel;
 
         ViewModel.prototype.toRequestParameters = function () {
             return ko.toJSON(this);
