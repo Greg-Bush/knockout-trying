@@ -3,7 +3,8 @@ require.config({
         "jquery": "libs/jquery.min",
         "jquery.tmpl": "libs/jquery.tmpl.min",
         "knockout": "libs/knockout.min",
-        "bootstrap": "libs/bootstrap.min"       
+        "bootstrap": "libs/bootstrap.min",
+        "jquery.ui": "https://code.jquery.com/ui/1.12.1/jquery-ui"
     }
 });
 
