@@ -1,5 +1,5 @@
 ﻿define(
-    ['jquery', 'knockout', './bindings/customDate', './bindings/datePicker'],
+    ['jquery', 'knockout', './bindings/customDate', './bindings/datePicker','./bindings/modal/modal'],
     function (jquery, ko) {
 
         return {
@@ -11,9 +11,11 @@
 
 
                 var viewModel = {
-                    date: ko.observable(new Date())
+                    date: ko.observable(new Date()),
+                    showModal: ko.observable(true)
                 }
 
+                window.model = viewModel;
 
                 $(function () {
                     ko.applyBindings(viewModel);
