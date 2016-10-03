@@ -34,6 +34,12 @@
             <credit-card-inputs></credit-card-inputs>
         </form>
     </div>
+    <script type="text/html" id="message-template">
+        <p data-bind="text:message"></p>
+    </script>
+    <div data-bind="modal:{show:showModal2,backdrop:true,keyboard:true},with: modal2">
+        <div data-bind="template:{name:template,data:data}"></div>
+    </div>
 </body>
 
 </html>
