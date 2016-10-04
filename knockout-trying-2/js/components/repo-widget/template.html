@@ -1,0 +1,12 @@
+﻿<div class="row">
+    <div class="col-xs-8">
+        <p>Name: <span data-bind="text: name"></span></p>
+        <p>Stargazers: <span data-bind="text: stargazers_count"></span></p>
+        <button data-bind="visible: isShowStargazersButtonActive, click: showStargazers" type="button" class="btn btn-info">
+            Show stargazers
+        </button>
+    </div>
+    <div class="col-xs-4">
+        <repo-stargazers params="array: stargazers"></repo-stargazers>
+    </div>
+</div>

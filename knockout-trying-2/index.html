@@ -1,0 +1,31 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <link rel="stylesheet" href="content/css/bootstrap.min.css">
+    <script data-main="js/main" src="js/libs/require.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="input-group">
+            <input data-bind="value: searchText" type="text" class="form-control" placeholder="Search for...">
+            <span class="input-group-btn">
+                <button class="btn btn-default" type="button">Go!</button>
+            </span>
+        </div><!-- /input-group -->
+
+        <div data-bind="visible: userInfo" class="row">
+            <div class="col-xs-4">
+                <user-widget params="model: userInfo"></user-widget>
+            </div>
+            <div data-bind="foreach: repos" class="col-xs-8">
+                <repo-widget params="model: $data"></repo-widget>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
