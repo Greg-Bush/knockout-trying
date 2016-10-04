@@ -1,3 +1,10 @@
-﻿<p>Username: <span data-bind="text: login"></span></p>
-<p>Repos count: <span data-bind="text: public_repos"></span></p>
-<p>Followers: <span data-bind="text: followers"></span></p>
+﻿<div data-bind="visible: userInfo" class="row">
+    <div class="col-xs-4">
+        <p>Username: <span data-bind="text: name"></span></p>
+        <p>Repos count: <span data-bind="text: publicRepositoriesCount"></span></p>
+        <p>Followers: <span data-bind="text: followersCount"></span></p>
+    </div>
+    <div data-bind="foreach: repositories" class="col-xs-8">
+        <repo-widget params="repositoryInfo: $data"></repo-widget>
+    </div>
+</div>

@@ -6,25 +6,14 @@
 
                 function ViewModel() {
                     this.searchText = ko.observable('');
-                    this.userInfo = ko.observable();
-                    this.repos = ko.observableArray([]);
+                    this.userUrl = ko.observable('');
 
-                    this.searchText.subscribe(function (text) {
-                        debugger;
-                        if (text === '')
+                    this.searchText.subscribe(function (newText) {
+                        if (newText === '')
                             return;
 
-                        var url = "https://api.github.com/users/" + text;
-                        $.getJSON(url, this.userInfo);
-                    }.bind(this));
-
-                    this.userInfo.subscribe(function (user) {
-                        debugger;
-                        if (!user.repos_url || !user.public_repos)
-                            return;
-
-                        $.getJSON(user.repos_url, this.repos);
-                    }.bind(this));
+                        this.userUrl("https://api.github.com/users/" + newText);
+                    }, this);
                 }
 
 

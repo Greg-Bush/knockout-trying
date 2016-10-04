@@ -17,14 +17,8 @@
             </span>
         </div><!-- /input-group -->
 
-        <div data-bind="visible: userInfo" class="row">
-            <div class="col-xs-4">
-                <user-widget params="model: userInfo"></user-widget>
-            </div>
-            <div data-bind="foreach: repos" class="col-xs-8">
-                <repo-widget params="model: $data"></repo-widget>
-            </div>
-        </div>
+
+        <user-widget params="userUrl: userUrl"></user-widget>
     </div>
 </body>
 
