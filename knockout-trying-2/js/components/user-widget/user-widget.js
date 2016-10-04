@@ -3,12 +3,10 @@
     function (ko, template) {
 
         ko.components.register('user-widget', {
-            viewModel: {
-                createViewModel: function (params, componentInfo) {
-                    debugger;
-                    var result = params.model;
-                    return result;
-                }
+            viewModel: function (params) {
+                debugger;
+                var result = params.model;
+                return result;
             },
             template: template
         });

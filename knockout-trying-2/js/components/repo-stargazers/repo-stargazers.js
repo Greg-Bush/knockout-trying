@@ -3,10 +3,8 @@
     function (ko, template) {
 
         ko.components.register('repo-stargazers', {
-            viewModel: {
-                createViewModel: function (params, componentInfo) {
-                    return params.array;
-                }
+            viewModel: function (params) {
+                return params.array;
             },
             template: template
         });
