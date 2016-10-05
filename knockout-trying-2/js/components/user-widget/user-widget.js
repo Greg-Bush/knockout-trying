@@ -25,11 +25,6 @@
                         }
                     }.bind(this));
                 }, this);
-
-                var model = {
-                    user: result
-                };
-                return model;
             },
             template: template
         });
