@@ -1,5 +1,5 @@
 ﻿define(
-    ['jquery', 'knockout', "../components/repo-widget/repo-widget", "../components/user-widget/user-widget"],
+    ['jquery', 'knockout', "../components/repo-widget/repo-widget", "../components/user-widget/user-widget", "../bindings/star/star"],
     function (jquery, ko) {
         return {
             start: function () {

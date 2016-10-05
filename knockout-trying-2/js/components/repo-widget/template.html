@@ -1,7 +1,7 @@
 ﻿<div class="row">
     <div class="col-xs-8">
         <p>Name: <span data-bind="text: repositoryInfo.name"></span></p>
-        <p>Stargazers: <span data-bind="text: repositoryInfo.stargazers_count"></span></p>
+        <p>Stargazers: <span data-bind="star: repositoryInfo.stargazers_count"></span></p>
         <button data-bind="visible: isShowStargazersButtonActive, click: showStargazers" type="button" class="btn btn-info">
             Show stargazers
         </button>
